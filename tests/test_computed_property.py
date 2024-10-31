@@ -63,7 +63,7 @@ def test_cache_miss() -> None:
 
 
 def test_docstring_is_preserved() -> None:
-    Circle().diameter.__doc__ == "my docstring"
+    assert Circle.diameter.__doc__ == "my docstring"
 
 
 def test_missing_attr_is_ignored() -> None:
