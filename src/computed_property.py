@@ -1,18 +1,18 @@
+from collections.abc import Callable
 from functools import wraps
-from typing import Callable
+from typing import Any, Tuple
 
 _sentinel = object()
 
 
-def computed_property(*attrs: str) -> Callable:
-    cache = {}
+def computed_property(*attrs: str) -> Callable[..., property]:
+    def decorator(func: Callable[[Callable[..., Any]], property]):
+        cache: dict[Tuple[Any, ...], Any] = {}
 
-    def decorator(func: Callable):
         @property
         @wraps(func)
-        def decorated_func(self, *args, **kwargs):
-            values = (getattr(self, attr, _sentinel) for attr in attrs)
-            cache_key = tuple([self, *values])  # one cache per class instance
+        def decorated_func(self: Any, *args: Any, **kwargs: Any) -> Any:
+            cache_key = tuple(getattr(self, attr, _sentinel) for attr in attrs)
 
             if cache_key not in cache:
                 cache[cache_key] = func(self, *args, **kwargs)
