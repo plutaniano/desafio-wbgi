@@ -12,7 +12,9 @@ def computed_property(*attrs: str) -> Callable[..., property]:
         @property
         @wraps(func)
         def decorated_func(self: Any, *args: Any, **kwargs: Any) -> Any:
-            cache_key = tuple(getattr(self, attr, _sentinel) for attr in attrs)
+            cache_key = tuple(
+                [self, *(getattr(self, attr, _sentinel) for attr in attrs)]
+            )
 
             if cache_key not in cache:
                 cache[cache_key] = func(self, *args, **kwargs)
